@@ -6,13 +6,29 @@ Given /the following movies exist/ do |movies_table|
   end
 end
 
+Then /I should see the movies sorted (.*)/ do |sort_param|
+  movie_order = []
+  if sort_param.eql?("alphabetically")
+	movie_order = Movie.order("title")
+  elsif sort_param.eql?("by release date")
+	movie_order = Movie.order("release_date")
+  end
+  movie_order.each_index {|index|
+			if index != (movie_order.length - 1)
+				step "I should see \"" + movie_order[index].title + "\" before \"" + movie_order[index + 1].title + "\""
+			end
+			 }
+end
+
 # Make sure that one string (regexp) occurs before or after another one
 #   on the same page
 
 Then /I should see "(.*)" before "(.*)"/ do |e1, e2|
   #  ensure that that e1 occurs before e2.
   #  page.body is the entire content of the page as a string.
-  fail "Unimplemented"
+  ind1 = page.body.index(e1)
+  ind2 = page.body.index(e2)
+  ind1 < ind2
 end
 
 # Make it easier to express checking or unchecking several boxes at once
